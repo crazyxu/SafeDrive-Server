@@ -9,7 +9,8 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 public class MyBatisUtil {
 	public final static String RECORD_CREATE = "me.xucan.drive.mapping.DriveRecordMapper.createRecord";
 	public final static String RECORD_UPDATE = "me.xucan.drive.mapping.DriveRecordMapper.updateRecord";
-	
+	public final static String RECORD_SELECT = "me.xucan.drive.mapping.DriveRecordMapper.selectRecord";
+
 	public static SqlSession getSession(){
 		//mybatis的配置文件
 	    String resource = "conf.xml";
@@ -22,6 +23,6 @@ public class MyBatisUtil {
 	    //构建sqlSession的工厂
 	    //SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(reader);
 	    //创建能执行映射文件中sql的sqlSession
-	    return sessionFactory.openSession();
+	    return sessionFactory.openSession(true);
 	}
 }

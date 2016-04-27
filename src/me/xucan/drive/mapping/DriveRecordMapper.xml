@@ -8,4 +8,7 @@
     <update id="updateRecord" parameterType="_DriveRecord" >
         UPDATE driverecord SET endPlace = #{endPlace}, endTime = #{endTime}, distance = #{distance} WHERE recordId = #{recordId}
     </update>
+    <select id="selectRecord" parameterType="hashmap" resultType="_DriveRecord">
+        SELECT * FROM driverecord where userId = #{userId} ORDER BY recordId LIMIT #{fromNum}, #{toNum}
+    </select>
 </mapper>
