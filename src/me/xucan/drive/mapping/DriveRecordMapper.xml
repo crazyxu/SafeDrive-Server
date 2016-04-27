@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.xucan.drive.mapping.DriveRecordMapper">
+    <insert id="createRecord" parameterType="_DriveRecord" 
+        useGeneratedKeys="true" keyProperty="recordId">
+        INSERT INTO driveRecord(userId, startTime, startPlace) VALUES(#{userId}, #{startTime}, #{startPlace})
+    </insert>
+    <update id="updateRecord" parameterType="_DriveRecord" >
+        UPDATE driverecord SET endPlace = #{endPlace}, endTime = #{endTime}, distance = #{distance} WHERE recordId = #{recordId}
+    </update>
+</mapper>
