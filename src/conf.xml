@@ -5,6 +5,7 @@
       <typeAliases>
         <typeAlias type = "me.xucan.drive.bean.DriveRecord" alias = "_DriveRecord"/>
         <typeAlias type = "me.xucan.drive.bean.DriveEvent" alias = "_DriveEvent"/>
+        <typeAlias type = "me.xucan.drive.bean.User" alias = "_User"/>
      </typeAliases>
       
       <environments default="development">
@@ -13,7 +14,7 @@
               <!-- 配置数据库连接信息 -->
               <dataSource type="POOLED">
                   <property name="driver" value="com.mysql.jdbc.Driver" />
-                 <property name="url" value="jdbc:mysql://localhost:3306/safedriver" />
+                 <property name="url" value="jdbc:mysql://localhost:3306/safedriver?useUnicode=true&amp;characterEncoding=utf8"/>
                  <property name="username" value="root" />
                  <property name="password" value="123456" />
              </dataSource>
@@ -24,6 +25,7 @@
      <mappers>
         <mapper resource="me/xucan/drive/mapping/DriveRecordMapper.xml"/>
         <mapper resource="me/xucan/drive/mapping/DriveEventMapper.xml"/>
+        <mapper resource="me/xucan/drive/mapping/UserMapper.xml"/>
      </mappers>
     
     

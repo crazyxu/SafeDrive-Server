@@ -2,6 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="me.xucan.drive.mapping.DriveEventMapper">
     <insert id="insertEvent" parameterType="_DriveEvent">
-        INSERT INTO driveRecord(userId, startTime, startPlace) VALUES(#{userId}, #{startTime}, #{startPlace})
+        INSERT INTO driveevent(recordId, type, time, extra) VALUES(#{recordId}, #{type}, #{time}, #{extra})
     </insert>
+    
+    <select id="selectEvent" parameterType="int" resultType="_DriveEvent">
+        SELECT * FROM driveevent where recordId = #{recordId}
+    </select>
 </mapper>

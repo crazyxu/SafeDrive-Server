@@ -1,11 +1,9 @@
 package me.xucan.drive.bean;
 
 public class DriveEvent {
-	//事件类型
+	//绫诲瀷
     private int type;
-    //一次出行DriveRecord Id
     private int recordId;
-    //发生时间
     private long time;
     //extra
     private String extra;
