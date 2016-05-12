@@ -63,6 +63,9 @@ public class UserServlet extends HttpServlet {
 		case UrlConstant.URL_USER_LOGIN:
 			login(request, response);
 			break;
+		case UrlConstant.URL_USER_UPDATE:
+			update(request, response);
+			break;
 		}
 	}
 
@@ -84,29 +87,36 @@ public class UserServlet extends HttpServlet {
 		String jsonRecord = request.getParameter("user");
 		User user = JSON.parseObject(jsonRecord, User.class);
 		if(user != null && TextUtil.isNotEmpty(user.getUserName())){
-			sqlSession.insert(MyBatisUtil.USER_INSERT, user);
-			if(user.getUserId() != 0){
-				//注册成功获取token
-				map.put("status", JsonUtil.ERROR_200);
-				String tokenJson = TokenUtil.getToken(user);
-				JSONObject jsonObject = JSON.parseObject(tokenJson);
-				if (jsonObject.getString("code").equals("200")) {
-					user.setToken(jsonObject.getJSONObject("result").getString("token"));
-					//token保存到数据库
-					int res = sqlSession.update(MyBatisUtil.USER_UPDATE_TOKEN, user);
-					if( res == 1){
-						map.put("status", JsonUtil.ERROR_200);
-						map.put("user", user);
+			int res = sqlSession.insert(MyBatisUtil.USER_INSERT, user);
+			if(res == 1){
+				if(user.getUserId() != 0){
+					//注册成功获取token
+					map.put("status", JsonUtil.ERROR_200);
+					String tokenJson = TokenUtil.getToken(user);
+					JSONObject jsonObject = JSON.parseObject(tokenJson);
+					if (jsonObject.getString("code").equals("200")) {
+						user.setToken(jsonObject.getJSONObject("result").getString("token"));
+						//token保存到数据库
+					    res = sqlSession.update(MyBatisUtil.USER_UPDATE_TOKEN, user);
+						if( res == 1){
+							map.put("status", JsonUtil.ERROR_200);
+							map.put("user", user);
+						}
+					}else{
+						map.put("status",JsonUtil.ERROR_500);
+						map.put("errorMsg", "get token fail");
 					}
+					
 				}else{
 					map.put("status",JsonUtil.ERROR_500);
-					map.put("errorMsg", "get token fail");
+					map.put("errorMsg", "record create fail");
 				}
-				
 			}else{
-				map.put("status",JsonUtil.ERROR_500);
-				map.put("errorMsg", "record create fail");
+				//操作失败,手机号已存在
+				map.put("status", JsonUtil.ERROR_PHONE_EXIST);
+				map.put("errorMsg", "phone exist");
 			}
+			
 		}else{
 			map.put("status",JsonUtil.ERROR_PARAM_NULL);
 			map.put("errorMsg", "user is empty");
@@ -123,7 +133,7 @@ public class UserServlet extends HttpServlet {
 		map = new HashMap<>();
 		String jsonRecord = request.getParameter("user");
 		User loginUser = JSON.parseObject(jsonRecord, User.class);
-		if(loginUser != null && TextUtil.isNotEmpty(loginUser.getUserName())){
+		if(loginUser != null && TextUtil.isNotEmpty(loginUser.getPhone())){
 			User user = sqlSession.selectOne(MyBatisUtil.USER_SELECT, loginUser);
 			if(user != null && user.getUserId() != 0){
 				map.put("status", JsonUtil.ERROR_200);
@@ -139,5 +149,31 @@ public class UserServlet extends HttpServlet {
 		
 		response.getWriter().append(JsonUtil.createJson(map));
 	}
-
+	
+	/**
+	 * 更新用户信息
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	void update(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		map = new HashMap<>();
+		String jsonRecord = request.getParameter("user");
+		User user = JSON.parseObject(jsonRecord, User.class);
+		if(user != null && user.getUserId() != 0){
+			int res = sqlSession.update(MyBatisUtil.USER_UPDATE_USER, user);
+			if(res == 1){
+				map.put("status", JsonUtil.ERROR_200);
+			}else{
+				map.put("status",JsonUtil.ERROR_500);
+				map.put("errorMsg", "user updtate fail");
+			}
+		}else{
+			map.put("status",JsonUtil.ERROR_PARAM_NULL);
+			map.put("errorMsg", "params is empty");
+		}
+		response.getWriter().append(JsonUtil.createJson(map));
+	}
+	
 }

@@ -3,12 +3,16 @@
 <mapper namespace="me.xucan.drive.mapping.UserMapper">
     <insert id="createUser" parameterType="_User" 
         useGeneratedKeys="true" keyProperty="userId">
-        INSERT INTO user( userName, portraitUri, token, password) VALUES(#{userName}, #{portraitUri}, #{token}, #{password})
+        INSERT INTO user( userName, portraitUri, token, password, phone) VALUES(#{userName}, #{portraitUri}, #{token}, #{password}, #{phone})
     </insert>
     <update id="updateUserToken" parameterType="_User" >
         UPDATE user SET token = #{token} WHERE userId = #{userId}
     </update>
     <select id="selectUser" parameterType="_User" resultType="_User">
-        SELECT * FROM user where userName = #{userName} and password = #{password}
+        SELECT * FROM user where phone = #{phone} and password = #{password}
     </select>
+    
+    <update id="updateUser" parameterType="_User">
+        UPDATE user SET urgentPhone = #{urgentPhone}, userName = #{userName}, portraitUri = #{portraitUri}, phone = #{phone} WHERE userId = #{userId}
+    </update>
 </mapper>

@@ -16,6 +16,7 @@ import org.apache.ibatis.session.SqlSession;
 
 import com.alibaba.fastjson.JSON;
 
+import me.xucan.drive.analyse.EventDeal;
 import me.xucan.drive.analyse.SafetyIndexManager;
 import me.xucan.drive.bean.DriveEvent;
 import me.xucan.drive.bean.DriveRecord;
@@ -100,9 +101,8 @@ public class EventServlet extends HttpServlet {
 			int res = sqlSession.insert(MyBatisUtil.EVENT_INSERT, event);
 			if(res == 1){
 				map.put("status", JsonUtil.ERROR_200);
-				List<String> ids = new ArrayList<>();
-				ids.add(userId);
-				MessageUtil.pushMessage(ids, event);
+				//处理事件
+				new EventDeal(event).start();
 			}else{
 				map.put("status",JsonUtil.ERROR_500);
 				map.put("errorMsg", "data save fail");
@@ -127,7 +127,7 @@ public class EventServlet extends HttpServlet {
 		String recordIdStr = request.getParameter("recordId");
 		if(TextUtil.isNotEmpty(recordIdStr)){
 			int recordId = Integer.valueOf(recordIdStr);
-			List<DriveEvent> events = sqlSession.selectList(MyBatisUtil.RECORD_SELECT, recordId);
+			List<DriveEvent> events = sqlSession.selectList(MyBatisUtil.EVENT_SELECT, recordId);
 			map.put("status", JsonUtil.ERROR_200);
 			map.put("events", events);
 		}else{

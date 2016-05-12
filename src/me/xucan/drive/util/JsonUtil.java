@@ -12,8 +12,10 @@ public class JsonUtil {
 	public final static int ERROR_500 = 500;
 	public final static int ERROR_200 = 200;
 	
+	public final static int ERROR_PHONE_EXIST = 101;
+	
 	/**
-	 * ¹¹½¨json¸ñÊ½µÄÊä³öÊý¾Ý
+	 * ï¿½ï¿½ï¿½ï¿½jsonï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * @param map
 	 * @return
 	 */

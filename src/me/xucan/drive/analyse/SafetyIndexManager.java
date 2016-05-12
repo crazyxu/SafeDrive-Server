@@ -3,11 +3,13 @@ package me.xucan.drive.analyse;
 public class SafetyIndexManager {
 	
 	/**
-	 * ¸ù¾ÝÄ³´ÎÐÐ³µ¼ÇÂ¼Êý¾Ý·ÖÎöÆä°²È«Ö¸Êý
+	 * ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½Ð³ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½ï¿½ä°²È«Ö¸ï¿½ï¿½
 	 * @param recordId
 	 * @return
 	 */
 	public static int getSafetyIndex(int recordId){
 		return 80;
 	}
+	
+	
 }

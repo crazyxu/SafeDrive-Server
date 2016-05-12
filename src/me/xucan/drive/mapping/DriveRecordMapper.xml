@@ -8,7 +8,16 @@
     <update id="updateRecord" parameterType="_DriveRecord" >
         UPDATE driverecord SET endPlace = #{endPlace}, endTime = #{endTime}, distance = #{distance} WHERE recordId = #{recordId}
     </update>
+    
+    <update id="updateSafetyIndex" parameterType="hashmap">
+        UPDATE driverecord SET safetyIndex = #{safetyIndex} WHERE recordId = #{recordId}
+    </update>
+    
     <select id="selectRecord" parameterType="hashmap" resultType="_DriveRecord">
         SELECT * FROM driverecord where userId = #{userId} ORDER BY recordId LIMIT #{fromNum}, #{toNum}
+    </select>
+    
+    <select id="getRecord" parameterType="int" resultType="_DriveRecord">
+        SELECT * FROM driverecord where recordId = #{recordId}
     </select>
 </mapper>

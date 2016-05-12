@@ -3,15 +3,23 @@ package me.xucan.drive.bean;
 public class User {
 	private String userName;
 	private String password;
+	private String phone;
+	private int userId;
+	private String portraitUri;
+	private String token;
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 	public String getPassword() {
 		return password;
 	}
 	public void setPassword(String userPwd) {
 		this.password = userPwd;
 	}
-	private int userId;
-	private String portraitUri;
-	private String token;
+	
 	public String getUserName() {
 		return userName;
 	}
