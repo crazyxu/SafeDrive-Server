@@ -1,6 +1,15 @@
 package me.xucan.drive.bean;
 
 public class DriveEvent {
+	private int id;
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	//类型
     private int type;
     private int recordId;

@@ -7,6 +7,13 @@ public class User {
 	private int userId;
 	private String portraitUri;
 	private String token;
+	private String urgentPhone;
+	public String getUrgentPhone() {
+		return urgentPhone;
+	}
+	public void setUrgentPhone(String urgentPhone) {
+		this.urgentPhone = urgentPhone;
+	}
 	public String getPhone() {
 		return phone;
 	}

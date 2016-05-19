@@ -38,7 +38,7 @@ public class EventDeal {
 	private SqlSession sqlSession;
 	
 	//行车环境
-	private int environment;
+	private int environment = EventType.ENVIR_NORMAL;
 	
 	private int safetyIndex;
 	
@@ -76,13 +76,22 @@ public class EventDeal {
 			case EventType.EVENT_ACCELERATION:
 				dealAccelerate();
 				break;
-			case EventType.EVENT_DECELERATION:
-				dealDeccelerate();
+			case EventType.EVENT_NO:
+				dealEventNo();
 				break;
+			case EventType.ENVIR_NORMAL:
+			case EventType.ENVIR_FOG:
+			case EventType.ENVIR_JAM:
+			case EventType.ENVIR_RAIN:
+				dealEnvir();
+				break;
+				
 		}
 		//处理结果
 		dealResult();
 	}
+	
+	
 	
 	/**
 	 * 获取当前设置的行车环境
@@ -131,7 +140,7 @@ public class EventDeal {
 			safetyIndex -= SAFETY_INDEX_MED;
 		}else if(hasHighSpeed && !fatigue){
 			safetyIndex -= SAFETY_INDEX_MED;
-		}else if(hasHighSpeed && fatigue){
+		}else if((hasHighSpeed && fatigue) || environment != EventType.ENVIR_NORMAL){
 			//追尾警告
 			safetyIndex -= SAFETY_INDEX_HIGH;
 			resEvent = new DriveEvent();
@@ -141,35 +150,113 @@ public class EventDeal {
 		}
 	}
 	
-	
+	/**
+	 * 一段时间没有发生事件，指数上升
+	 */
+	private void dealEventNo(){
+		safetyIndex += SAFETY_INDEX_LOW;
+		if(safetyIndex >= 100)
+			safetyIndex = 100;
+		thisEvent.setExtra(String.valueOf(safetyIndex));
+		sqlSession.update(MyBatisUtil.EVENT_UPDATE, thisEvent);
+	}
 	
 	/**
 	 * 处理疲劳事件
 	 */
 	private void dealFatigue(){
-		
+		//偏移次数
+		int skewingCount = 0;
+		//结合之前的行车事件
+		for(int i = 0; i < eventList.size(); i++){
+			DriveEvent event = eventList.get(i);
+			switch(event.getType()){
+				case EventType.EVENT_SKEWING:
+					skewingCount ++;
+			}
+		}
+		if(skewingCount >= 2){
+			safetyIndex -= SAFETY_INDEX_HIGH;
+			resEvent = new DriveEvent();
+			resEvent.setRecordId(record.getRecordId());
+			resEvent.setTime(new Date().getTime());
+			resEvent.setType(EventType.WARN_FATIGUE);
+		}else if(skewingCount == 1){
+			safetyIndex -= SAFETY_INDEX_MED;
+		}else if(skewingCount == 0){
+			safetyIndex -= SAFETY_INDEX_LOW;
+		}
 	}
 	
 	/**
 	 * 处理偏移事件
 	 */
 	private void dealSkewing(){
-		
+		int skewingCount = 0, fatigue = 0;
+		boolean hasHighSpeed = false;
+		for(int i = 0; i < eventList.size(); i++){
+			DriveEvent event = eventList.get(i);
+			switch(event.getType()){
+				case EventType.EVENT_SKEWING:
+					skewingCount ++;
+					break;
+				case EventType.EVENT_FATIGUE:
+					fatigue ++;
+					break;
+				case EventType.EVENT_ACCELERATION:
+					//是否有高速行驶记录
+					try{
+						int speed = Integer.valueOf(event.getExtra());
+						if(isHighSpeed(speed))
+							hasHighSpeed = true;
+					}catch(Exception e){
+						e.printStackTrace();
+					}
+					
+			}
+		}
+		//是否有疲劳驾驶风险
+		if(skewingCount >= 2 && fatigue >= 1){
+			safetyIndex -= SAFETY_INDEX_HIGH;
+			resEvent = new DriveEvent();
+			resEvent.setRecordId(record.getRecordId());
+			resEvent.setTime(new Date().getTime());
+			resEvent.setType(EventType.WARN_FATIGUE);
+		}else if(hasHighSpeed && skewingCount >= 2){
+			safetyIndex -= SAFETY_INDEX_HIGH;
+			resEvent = new DriveEvent();
+			resEvent.setRecordId(record.getRecordId());
+			resEvent.setTime(new Date().getTime());
+			resEvent.setType(EventType.WARN_FRACTION);
+		}else if(skewingCount >= 2){
+			safetyIndex -= SAFETY_INDEX_MED;
+		}else{
+			safetyIndex -= SAFETY_INDEX_LOW;
+		}
 	}
 	
 	/**
 	 * 处理加速事件
 	 */
 	private void dealAccelerate(){
-		
+		int speed = Integer.valueOf(thisEvent.getExtra());
+		if(isHighSpeed(speed)){
+			//超速
+			safetyIndex -= SAFETY_INDEX_HIGH;
+			resEvent = new DriveEvent();
+			resEvent.setRecordId(record.getRecordId());
+			resEvent.setTime(new Date().getTime());
+			resEvent.setType(EventType.WARN_OVER_SPEED);
+		}
 	}
 	
 	/**
-	 * 处理减速事件
+	 * 处理环境事件
 	 */
-	private void dealDeccelerate(){
-		
+	private void dealEnvir(){
+		environment = thisEvent.getType();
 	}
+	
 	
 	
 	/**

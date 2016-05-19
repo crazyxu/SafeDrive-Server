@@ -16,6 +16,7 @@ public class MyBatisUtil {
 	
 	public final static String EVENT_INSERT = "me.xucan.drive.mapping.DriveEventMapper.insertEvent";
 	public final static String EVENT_SELECT = "me.xucan.drive.mapping.DriveEventMapper.selectEvent";
+	public final static String EVENT_UPDATE = "me.xucan.drive.mapping.DriveEventMapper.updateEvent";
 	
 	public final static String USER_INSERT = "me.xucan.drive.mapping.UserMapper.createUser";
 	public final static String USER_UPDATE_TOKEN = "me.xucan.drive.mapping.UserMapper.updateUserToken";
